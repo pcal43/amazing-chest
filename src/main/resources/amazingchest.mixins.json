@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "net.pcal.amazingchest.mixins",
+  "compatibilityLevel": "JAVA_16",
+  "mixins": [
+    "AcBlockItem",
+    "AcHopperBlockEntityMixin",
+    "AcTextureRenderLayersMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

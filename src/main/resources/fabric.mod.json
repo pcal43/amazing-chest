@@ -1,24 +1,24 @@
 {
   "schemaVersion": 1,
-  "id": "copperhopper",
+  "id": "amazingchest",
   "version": "${version}",
-  "name": "Copper Hopper",
-  "description": "Vanilla-friendly item filtering.",
-  "authors": ["pcal"],
+  "name": "Amazing Chest",
+  "description": "Truly Vanilla-friendly item filtering.",
+  "authors": ["pcal.net"],
 
   "contact": {
-    "homepage": "https://github.com/pcal43/",
-    "sources": "https://github.com/pcal43/copper-hopper"
+    "homepage": "https://github.com/pcal43/amazing-chest",
+    "sources": "https://github.com/pcal43/amazing-chest"
   },
-  "license": "Apache-2.0",
+  "license": "MIT",
   "icon": "icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": ["net.pcal.copperhopper.CohoInitializer"],
-    "client": ["net.pcal.copperhopper.CohoInitializer"]
+    "main": ["net.pcal.amazingchest.AcInitializer"],
+    "client": ["net.pcal.amazingchest.AcInitializer"]
   },
   "mixins": [
-    "copperhopper.mixins.json"
+    "amazingchest.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=0.11.3",
@@ -26,7 +26,7 @@
     "minecraft": "1.18.x",
     "java": ">=17"
   },
-  "suggests": {
-    "another-mod": "*"
+  "conflicts": {
+    "lithium": "*"
   }
 }
