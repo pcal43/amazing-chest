@@ -3,7 +3,7 @@
   "id": "amazingchest",
   "version": "${version}",
   "name": "Amazing Chest",
-  "description": "Truly Vanilla-friendly item filtering.",
+  "description": "Easy and flexible item sorting.",
   "authors": ["pcal.net"],
 
   "contact": {

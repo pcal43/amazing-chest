@@ -1,20 +1,23 @@
 <p>
-    <b>Copper Hopper</b> adds a new kind of hopper that you can use to filter which items get
-    pulled and pushed. They help you more easily build item sorting systems while keeping in
-    the spirit of vanilla Minecraft.
+    <b>Amazing Chest</b> adds a new 'Sorting Chest' block to your world.  Sorting Chests will automatically
+    pull matching items into themselves from any connected hopper chain.
+</p>
+<p>
+    It works a lot like a <a href="https://www.youtube.com/watch?v=wsNV9Mo00Gw"Tango Tek</a> sorting system
+    (but without actually having to build one).
 </p>
 
 <p></p>
 
 <h3>Features</h3>
 <ul>
-    <li>Filter up to 5 items</li>
-    <li>Filter both stackable and unstackable items</li>
+    <li>Super easy item sorting setup</li>
+    <li>Reorganize the sorter at any time by just moving items to different chests</li>
+    <li>Sort both stackable and unstackable items</li>
     <li>Works with the Fabric modloader</li>
     <li>Can work without being installed in the client (thanks to the awesome <a href='https://polymer.pb4.eu'>Polymer
         framework</a>)
     </li>
-    <li>Made of copper!</li>
 </ul>
 
 <p></p>
@@ -27,26 +30,40 @@
 
 <p></p>
 
-<h3>Setting Filters</h3>
-<a href='https://www.curseforge.com/minecraft/mc-mods/copper-hopper/screenshots'>
-    <img src='https://media.forgecdn.net/attachments/430/444/dialog.png'  width='375'/>
-</a>
 
-<p></p>
+<h3>How do I use a Sorting Chest?</h3>
 
+<ul>
+    <li>
+        Create a chain of hoppers like shown.
+    </li>
+    <li>
+        Put items in the chests that you want to show up in those chests.
+    </li>
+    <li>
+        Make sure there's a regular 'overflow' chest somewhere on the chain to accept items that
+        don't match any of the Sorting Chests.
+    </li>
+</ul>
 
-<h3>Quickly build sorting systems like this!</h3>
-<a href='https://www.curseforge.com/minecraft/mc-mods/copper-hopper/screenshots'>
-    <img src='https://media.forgecdn.net/attachments/430/559/sorted_storage.png' width='375'/>
-</a>
 
 
 <p></p>
 
 <h3>How does it work exactly?</h3>
-Copper Hoppers try to approximate the way vanilla item sorters work.  They're just like a regular hopper except:
 <ul>
-    <li>They never accept an item of a type that is not already held in the hopper.</li>
+    <li>
+        When a Sorting Chest is connected to a hopper chain, any items in the chain that match items in the
+        Sorting Chest will automatically be routed into it.
+    </li>
+    <li>
+        A Sorting Chest will never allow a hopper to push items into it that don't match an item it already
+        contains.
+    </li>
+    <li>
+        Also, if a hopper pulls items out of a Sorting Chest, it will never pull the last item of a given
+        type.  This ensures that the Sorting Chest will continue to sort items the items you put into it.
+    </li>
     <li>They always keep the last item of a type that is held in the hopper.</li>
 </ul>
 
@@ -68,9 +85,7 @@ Copper Hoppers try to approximate the way vanilla item sorters work.  They're ju
 
 <h3>Notes</h3>
 <ul>
-    <li>The item texture for Copper Hopper was contributed by <a href='https://github.com/ppblitto'>Pablo Henrique</a>.  (Thanks!)</li>
-    <li>Copper Hopper was inspired by Mr. Crayfish's excellent <a href='https://www.curseforge.com/minecraft/mc-mods/golden-hopper'>Golden Hopper</a> mod.</li>
-    <li>I will not be doing a Forge port of Copper Hopper. (sorry)</li>
+    <li>I will not be doing a Forge port of Amazing Chest. (sorry)</li>
 </ul>
 
 
@@ -78,7 +93,7 @@ Copper Hoppers try to approximate the way vanilla item sorters work.  They're ju
 
 <h3>Legal</h3>
 <p>
-    Copper Hopper is published under the MIT License.
+    Amazing Chest is published under the MIT License.
 </p>
 <p>
     You're free to include it in your modpack provided you attribute it to <b><a href='https://github.com/pcal43'>pcal43</a></b>.
