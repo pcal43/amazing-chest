@@ -97,6 +97,8 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
                     if (in == null) {
                         throw new IllegalStateException("Unable to load " + DEFAULT_CONFIG_FILENAME);
                     }
+                    // I guess config might not yet exist on fresh install
+                    java.nio.file.Files.createDirectories(configFilePath.getParent());
                     java.nio.file.Files.copy(in, configFilePath);
                     logger.info(LOG_PREFIX + "Wrote default configuration to " + configFilePath);
                 }
