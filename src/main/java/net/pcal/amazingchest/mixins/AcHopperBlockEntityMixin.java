@@ -21,27 +21,19 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class AcHopperBlockEntityMixin {
 
     /**
-     * Somewhat invasive change to prevent the hopper from pushing out it's last item.  Basically make the stacks
-     * read as empty if they shouldn't be pushed out.
+     * Somewhat invasive change to check if the hopper should push an item out.  Not sure there's a good
+     * way to do this without the redirect.
      */
-    @Redirect(method = "insert",
-            at = @At(value = "INVOKE",
-                    ordinal = 0,
-                    target = "Lnet/minecraft/inventory/Inventory;getStack(I)Lnet/minecraft/item/ItemStack;"))
-    private static ItemStack __getStack(
-         // target params
-         Inventory pushingInventory, int slot,
-         // method params
-        World world, BlockPos pos, BlockState state, Inventory ignored) {
-        final ItemStack original = pushingInventory.getStack(slot);
-        if (AcService.getInstance().shouldVetoPushFrom(pushingInventory, original.getItem(), world, pos)) {
-            return ItemStack.EMPTY;
-        }
-        return original;
+    @Redirect(method = "insert", at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemStack;isEmpty()Z", ordinal = 0))
+    private static boolean filterOutput(ItemStack stack, World world, BlockPos pos, BlockState state, Inventory inventory) {
+        if (stack.isEmpty()) return true;
+        return AcService.getInstance().shouldVetoPushFrom(inventory, stack.getItem(), world, pos);
     }
 
 
-
+    /**
+     * Check to see if a hopper should extract (pull) an item.
+     */
     @Inject(method = "canExtract", at = @At("HEAD"), cancellable = true)
     private static void __canExtract (Inventory pullFrom, ItemStack stack, int slot, Direction facing, CallbackInfoReturnable<Boolean> returnable) {
         if (AcService.getInstance().shouldVetoPullFrom(pullFrom, stack, facing)) {
@@ -49,25 +41,4 @@ public abstract class AcHopperBlockEntityMixin {
         }
     }
 
-    /**
-     * Somewhat invasive change to prevent the hopper from pushing out it's last item.  Basically make the stacks
-     * read as empty if they shouldn't be pushed out.
-
-    @Redirect(method = "canExtract",
-            at = @At(value = "INVOKE",
-                    ordinal = 0,
-                    target = "Lnet/minecraft/inventory/Inventory;getStack(I)Lnet/minecraft/item/ItemStack;"))
-    private static ItemStack _extract(
-            // target params
-            Inventory pullingInventory, int slot1,
-            // method params
-            Hopper hopper, Inventory inventory, int slot, Direction side) {
-//        final ItemStack original = fromInventory.getStack(slot);
-//        if (AcService.getInstance().shouldVetoPullInto(toHopper, original.getItem())) {
-//            return ItemStack.EMPTY;
-//        }
-//        return original;
-        return null;
-    }
-    **/
 }
