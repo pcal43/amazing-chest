@@ -14,6 +14,10 @@ public interface AcUtils {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     static boolean containsAtLeast(AmazingChestBlockEntity ace, Item item, int atLeast) {
         final Inventory inventory = getInventoryFor(ace);
+        return containsAtLeast(inventory, item, atLeast);
+    }
+
+    static boolean containsAtLeast(Inventory inventory, Item item, int atLeast) {
         int count = 0;
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack itemStack = inventory.getStack(i);

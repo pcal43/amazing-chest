@@ -1,7 +1,7 @@
 package net.pcal.amazingchest;
 
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.item.Item;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -28,4 +28,11 @@ public abstract class AcIdentifiers {
         return (BlockEntityType<AmazingChestBlockEntity>)
                 requireNonNull(Registry.BLOCK_ENTITY_TYPE.get(AC_BLOCK_ENTITY_TYPE_ID));
     }
+
+    public static ScreenHandlerType<AcScreenHandler> getScreenHandlerType() {
+        //noinspection unchecked
+        return requireNonNull((ScreenHandlerType<AcScreenHandler>)
+                Registry.SCREEN_HANDLER.get(AC_SCREEN_ID));
+    }
+
 }
