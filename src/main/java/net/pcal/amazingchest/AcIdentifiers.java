@@ -17,6 +17,7 @@ public abstract class AcIdentifiers {
     public static final Identifier AC_BLOCK_ENTITY_TYPE_ID = new Identifier(MOD_ID + ":amazing_chest_entity");
     public static final Identifier AC_ITEM_ID = new Identifier(MOD_ID + ":amazing_chest");
     public static final Identifier AC_BLOCK_ID = new Identifier(MOD_ID + ":amazing_chest");
+    public static final Identifier AC_SCREEN_ID = new Identifier(MOD_ID + ":amazing_chest");
 
     public static AmazingChestBlock getAcBlock() {
         return (AmazingChestBlock) requireNonNull(Registry.BLOCK.get(AC_BLOCK_ID));
