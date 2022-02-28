@@ -4,12 +4,14 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
 import net.minecraft.item.BlockItem;
@@ -54,6 +56,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
     public void onInitializeClient() {
         new ExactlyOnceServiceInitializer();
         // client stuff
+        ScreenRegistry.register(AcIdentifiers.getScreenHandlerType(), GenericContainerScreen::new);
         BlockEntityType<AmazingChestBlockEntity> entityType = AcIdentifiers.getAcBlockEntityType();
         BlockEntityRendererRegistry.register(entityType, ChestBlockEntityRenderer::new);
         ClientSpriteRegistryCallback.event(TexturedRenderLayers.CHEST_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
@@ -137,7 +140,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
      * Create and register all of our blocks and items for non-polymer mode.
      */
     private static void doStandardRegistrations() {
-        ScreenHandlerRegistry.registerSimple(AC_SCREEN_ID, AcScreenHandler::create);
+        ScreenHandlerRegistry.registerSimple(AC_SCREEN_ID, AcScreenHandler::createForRegistration);
         final AmazingChestBlock acBlock = new AmazingChestBlock();
         final BlockItem acItem = new BlockItem(acBlock, new Item.Settings().group(ItemGroup.REDSTONE));
         //acItem.appendBlocks(Item.BLOCK_ITEMS, acItem); // wat
