@@ -56,7 +56,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
     public void onInitializeClient() {
         new ExactlyOnceServiceInitializer();
         // client stuff
-        ScreenRegistry.register(AcIdentifiers.getScreenHandlerType(), GenericContainerScreen::new);
+        ScreenRegistry.register(AcIdentifiers.getScreenHandlerType(), AcScreen::new);
         BlockEntityType<AmazingChestBlockEntity> entityType = AcIdentifiers.getAcBlockEntityType();
         BlockEntityRendererRegistry.register(entityType, ChestBlockEntityRenderer::new);
         ClientSpriteRegistryCallback.event(TexturedRenderLayers.CHEST_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
