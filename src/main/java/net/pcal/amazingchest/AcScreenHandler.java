@@ -27,17 +27,9 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
         return new AcScreenHandler(AcIdentifiers.getScreenHandlerType(), syncId, playerInventory, amazingChest, 3);
     }
 
-
     static ScreenHandler createForRegistration(int syncId, PlayerInventory playerInventory) {
         return new AcScreenHandler(AcIdentifiers.getScreenHandlerType(), syncId, playerInventory, new SimpleInventory(9 * 3), 3);
     }
-
-    /**
-    public void setCursorStack(ItemStack stack) {
-        stack.setCount(stack.getCount() - 1);
-        super.setCursorStack(stack);
-    }
-**/
 
     @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
@@ -66,38 +58,6 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
         return stack;
     }
 
-/**    @Override
-    public ScreenHandlerType<?> getType() {
-        return AcIdentifiers.getScreenHandlerType();
-    }
-**/
-    static class AmazingSimpleInventory extends SimpleInventory {
-        public AmazingSimpleInventory(int size) {
-            super(size);
-        }
-
-        /**
-        @Override
-        public ItemStack removeStack(int slot) {
-            ItemStack itemStack = super.getStack(slot);
-            if (itemStack.isEmpty()) {
-                return ItemStack.EMPTY;
-            }
-            Inventory i = this;
-            if (containsAtLeast(i, itemStack.getItem(), itemStack.getCount()+1)) {
-                return itemStack;
-            }
-
-            ItemStack leftover = itemStack.copy();
-            leftover.setCount(1);
-            this.setStack(slot, leftover);
-            itemStack.setCount(itemStack.getCount() - 1);
-            return itemStack;
-        }
-         **/
-    }
-
-
     class AmazingSlot extends Slot {
 
         AmazingSlot(Slot s) {
@@ -115,21 +75,6 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
                 return super.tryTakeStackRange(min - 1, max, player);
             }
         }
-/**
-        @Override
-        public ItemStack takeStack(int amount) {
-            return this.inventory.removeStack(this.getIndex(), amount);
-        }
-
-        @Override
-        public void onQuickTransfer(ItemStack newItem, ItemStack original) {
-            int i = original.getCount() - newItem.getCount();
-            if (i > 0) {
-                this.onCrafted(original, i);
-            }
-        }
- **/
     }
-
 }
 
