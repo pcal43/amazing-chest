@@ -16,6 +16,9 @@ import static net.pcal.amazingchest.AcUtils.containsAtLeast;
 
 public class AcScreenHandler extends GenericContainerScreenHandler {
 
+    private boolean locked = true;
+//https://forums.minecraftforge.net/topic/24747-how-to-properly-send-a-packet-on-a-button-click/
+// https://github.com/kyrptonaught/Inventory-Sorter/blob/3224991c945a85926f0e73791ffa6f8a5b160a8d/src/main/java/net/kyrptonaught/inventorysorter/network/InventorySortPacket.java
     private AcScreenHandler(ScreenHandlerType<GenericContainerScreenHandler> type, int syncId, PlayerInventory playerInventory, Inventory amazingChest, int rows) {
         super(type, syncId, playerInventory, amazingChest, rows);
         for (int i = 0; i < 27; i++) {
@@ -31,9 +34,18 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
         return new AcScreenHandler(AcIdentifiers.getScreenHandlerType(), syncId, playerInventory, new SimpleInventory(9 * 3), 3);
     }
 
+    public boolean toggleLock() {
+        this.locked = !this.locked;
+        return this.locked;
+    }
+
+    public boolean isLocked() {
+        return this.locked;
+    }
+
     @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
-        if (index > 27) return super.transferSlot(player, index);
+        if (!this.locked || index > 27) return super.transferSlot(player, index);
         Slot slot = this.slots.get(index);
         if (slot == null || !slot.hasStack()) {
             return ItemStack.EMPTY;
@@ -69,7 +81,7 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
         public Optional<ItemStack> tryTakeStackRange(int min, int max, PlayerEntity player) {
             ItemStack itemStack = super.getStack();
             // i don't think it's actually 'min' - seems to be the actual number they're trying to grab
-            if (containsAtLeast(AcScreenHandler.this.getInventory(), itemStack.getItem(), min+1)) {
+            if (!AcScreenHandler.this.locked || containsAtLeast(AcScreenHandler.this.getInventory(), itemStack.getItem(), min+1)) {
                 return super.tryTakeStackRange(min, max, player);
             } else {
                 return super.tryTakeStackRange(min - 1, max, player);
