@@ -11,7 +11,7 @@ import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-
+import net.pcal.amazingchest.network.LockPacket;
 
 import static net.pcal.amazingchest.AcIdentifiers.MOD_ID;
 
@@ -39,7 +39,7 @@ public class AcScreen extends GenericContainerScreen {
         public void onPress() {
             boolean newLockState = ((AcScreenHandler)AcScreen.this.getScreenHandler()).toggleLock();
             System.out.println("CLICK!   "+newLockState);
-            modId.network
+            LockPacket.sendLockPacket(newLockState);
         }
 
         @Override

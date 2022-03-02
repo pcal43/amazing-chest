@@ -20,6 +20,7 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.pcal.amazingchest.AcService.CacheInvalidationPolicy;
+import net.pcal.amazingchest.network.LockPacket;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -119,6 +120,9 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
                 logger.info(LOG_PREFIX + "cachePolicy set to " + cachePolicy);
             }
             AcService.initialize(cachePolicy, logger);
+
+            LockPacket.registerReceivePacket();
+
             //
             // register blocks
             final String polymerEnabled = config.getProperty("polymer-enabled");
