@@ -17,8 +17,8 @@ public class LockPacket {
 
     public static void registerReceivePacket() {
         ServerPlayNetworking.registerGlobalReceiver(SORT_INV_PACKET, ((server, player, handler, buf, responseSender) -> {
-            boolean lock = buf.readBoolean();
-            server.execute(() -> ((AcScreenHandler)player.currentScreenHandler).toggleLock());
+            boolean locked = buf.readBoolean();
+            server.execute(() -> ((AcScreenHandler)player.currentScreenHandler).setLocked(locked));
         }));
     }
 

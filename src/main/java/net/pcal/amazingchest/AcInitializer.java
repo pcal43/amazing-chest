@@ -14,9 +14,11 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 import net.minecraft.client.render.TexturedRenderLayers;
 import net.minecraft.client.render.block.entity.ChestBlockEntityRenderer;
+import net.minecraft.client.texture.TextureManager;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.pcal.amazingchest.AcService.CacheInvalidationPolicy;
@@ -65,6 +67,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
             registry.register(AC_TEXTURE_RIGHT);
             registry.register(AC_TEXTURE_LEFT);
         });
+
         AmazingChestBlock acBlock = AcIdentifiers.getAcBlock();
         BuiltinItemRendererRegistry.INSTANCE.register(acBlock, (stack, mode, matrices, vertexConsumers, light, overlay) -> {
             MinecraftClient.getInstance().getBlockEntityRenderDispatcher().renderEntity(entityType.

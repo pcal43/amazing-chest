@@ -34,9 +34,13 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
         return new AcScreenHandler(AcIdentifiers.getScreenHandlerType(), syncId, playerInventory, new SimpleInventory(9 * 3), 3);
     }
 
-    public boolean toggleLock() {
+    public boolean toggleLocked() {
         this.locked = !this.locked;
         return this.locked;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
     }
 
     public boolean isLocked() {
