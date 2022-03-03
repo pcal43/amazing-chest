@@ -1,16 +1,17 @@
 package net.pcal.amazingchest;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.gui.screen.ingame.GenericContainerScreen;
 
-import net.minecraft.client.gui.widget.TexturedButtonWidget;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.pcal.amazingchest.network.LockPacket;
@@ -20,7 +21,6 @@ import static net.pcal.amazingchest.AcIdentifiers.MOD_ID;
 public class AcScreen extends GenericContainerScreen {
 
     public static final Identifier texture = new Identifier(MOD_ID, "textures/gui/button.png");
-//    private static final Identifier texture = new Identifier("minecraft", "textures/gui/icons.png");
 
     public AcScreen(GenericContainerScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
@@ -31,50 +31,62 @@ public class AcScreen extends GenericContainerScreen {
     protected void init() {
         super.init();
         MinecraftClient.getInstance().getTextureManager().bindTexture(AcScreen.texture);
-        SortButtonWidget button = new SortButtonWidget(this.x + this.backgroundWidth - BUTTON_WIDTH, this.y + 6);
+        LockButtonWidget button = new LockButtonWidget(this.x + this.backgroundWidth - (BUTTON_WIDTH * 2 + 8), this.y + 6);
         this.addDrawableChild(button);
     }
 
-    private class LockButton extends ToggleButtonWidget {
+    @Environment(EnvType.CLIENT)
+    public static class LockButtonWidget extends ToggleButtonWidget {
+        private static final Identifier texture = new Identifier(MOD_ID, "textures/gui/button.png");
 
-        LockButton(int x, int y) {
-            super(x, y, 20, 18, true);
+        public LockButtonWidget(int x, int y) {
+            super(x,y , 20, 18, false);
         }
 
         @Override
-        public void onClick(double x, double y) {
-            super.onClick(x,y);
+        public void onClick(double mouseX, double mouseY) {
+            System.out.println("push!");
             super.setToggled(!super.isToggled());
-            boolean newLockState = ((AcScreenHandler)AcScreen.this.getScreenHandler()).toggleLocked();
-            System.out.println("CLICK!   "+isToggled());
             LockPacket.sendLockPacket(isToggled());
-
-        }
-        @Override
-        public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-            // Render the button
-            super.render(matrices, mouseX, mouseY, delta);
-
-            // Find and render the icon
-            client.getTextureManager().bindTexture(texture);
-
-            int iconOffset = 0;
-            int iconX = x + iconOffset;
-            int iconY = y + iconOffset;
-            int iconU = 0;
-            int iconV = 0;
-            drawTexture(matrices, iconX, iconY, iconU, iconV, 20, 18);
         }
 
         @Override
-        public void renderTooltip(MatrixStack matrices, int x, int y) {
-            if (this.isHovered()) {
-                //boolean isLocked = ((AcScreenHandler)AcScreen.this.getScreenHandler()).isLocked();
-                boolean isLocked = super.isToggled();
-                String text = isLocked ? "Click to unlock" : "Click to lock";
-                MinecraftClient.getInstance().currentScreen.
-                        renderTooltip(matrices, new LiteralText(text), x, y);
-            }
+        public void renderButton(MatrixStack matrixStack, int int_1, int int_2, float float_1) {
+            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShaderTexture(0, texture);
+            RenderSystem.enableDepthTest();
+            matrixStack.push();
+            matrixStack.scale(.5f, .5f, 1);
+            matrixStack.translate(x, y, 0);
+            drawTexture(matrixStack, this.x, this.y, 0, this.isToggled() ? 19 : 0, 20, 18, 20, 37);
+            //this.renderTooltip(matrixStack, int_1, int_2);
+            matrixStack.pop();
         }
+/**
+ @Override
+ public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+ int current = InventorySorterModClient.getConfig().sortType.ordinal();
+ if (amount > 0) {
+ current++;
+ if (current >= SortCases.SortType.values().length)
+ current = 0;
+ } else {
+ current--;
+ if (current < 0)
+ current = SortCases.SortType.values().length - 1;
+ }
+ InventorySorterModClient.getConfig().sortType = SortCases.SortType.values()[current];
+ InventorySorterMod.configManager.save();
+ InventorySorterModClient.syncConfig();
+ return true;
+ }
+
+ @Override
+ public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
+ if (InventorySorterModClient.getConfig().displayTooltip && this.isHovered())
+ MinecraftClient.getInstance().currentScreen.renderTooltip(matrices, new LiteralText("Sort by: " + StringUtils.capitalize(InventorySorterModClient.getConfig().sortType.toString().toLowerCase())), x, y);
+ }
+ */
     }
+
 }
