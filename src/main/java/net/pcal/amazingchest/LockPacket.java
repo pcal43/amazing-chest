@@ -1,4 +1,4 @@
-package net.pcal.amazingchest.network;
+package net.pcal.amazingchest;
 
 import io.netty.buffer.Unpooled;
 import net.fabricmc.api.EnvType;

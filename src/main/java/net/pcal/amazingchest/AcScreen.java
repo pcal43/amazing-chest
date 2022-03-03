@@ -14,7 +14,6 @@ import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.pcal.amazingchest.network.LockPacket;
 
 import static net.pcal.amazingchest.AcIdentifiers.MOD_ID;
 
