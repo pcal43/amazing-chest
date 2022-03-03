@@ -26,14 +26,12 @@ public class AcScreen extends GenericContainerScreen {
         super(handler, inventory, title);
     }
 
+    private static final int BUTTON_WIDTH = 20;
     @Override
     protected void init() {
         super.init();
         MinecraftClient.getInstance().getTextureManager().bindTexture(AcScreen.texture);
-
-        SortButtonWidget button = new SortButtonWidget(this.x + 50, this.y);
-        //button.setTextureUV(0,0, 20, 18, texture);
-        //button.setTextureUV(0,0, 20, 0, texture);
+        SortButtonWidget button = new SortButtonWidget(this.x + this.backgroundWidth - BUTTON_WIDTH, this.y + 6);
         this.addDrawableChild(button);
     }
 
