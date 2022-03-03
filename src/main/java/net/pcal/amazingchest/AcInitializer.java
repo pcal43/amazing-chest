@@ -55,7 +55,8 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
     public void onInitializeClient() {
         new ExactlyOnceServiceInitializer();
         // client stuff
-        ScreenRegistry.register(AcIdentifiers.getScreenHandlerType(), AcScreen::new);
+        ScreenRegistry.register(AcIdentifiers.getSingleScreenHandlerType(), AcScreen::new);
+        ScreenRegistry.register(AcIdentifiers.getDoubleScreenHandlerType(), AcScreen::new);
         BlockEntityType<AmazingChestBlockEntity> entityType = AcIdentifiers.getAcBlockEntityType();
         BlockEntityRendererRegistry.register(entityType, ChestBlockEntityRenderer::new);
         ClientSpriteRegistryCallback.event(TexturedRenderLayers.CHEST_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
@@ -120,7 +121,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
             }
             AcService.initialize(cachePolicy, logger);
 
-            LockPacket.registerReceivePacket();
+            AcLockPacket.registerReceivePacket();
 
             //
             // register blocks
@@ -143,7 +144,8 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
      * Create and register all of our blocks and items for non-polymer mode.
      */
     private static void doStandardRegistrations() {
-        ScreenHandlerRegistry.registerSimple(AC_SCREEN_ID, AcScreenHandler::createForRegistration);
+        ScreenHandlerRegistry.registerSimple(AC_SINGLE_SCREEN_ID, AcScreenHandler::registerSingle);
+        ScreenHandlerRegistry.registerSimple(AC_DOUBLE_SCREEN_ID, AcScreenHandler::registerDouble);
         final AmazingChestBlock acBlock = new AmazingChestBlock();
         final BlockItem acItem = new BlockItem(acBlock, new Item.Settings().group(ItemGroup.REDSTONE));
         //acItem.appendBlocks(Item.BLOCK_ITEMS, acItem); // wat

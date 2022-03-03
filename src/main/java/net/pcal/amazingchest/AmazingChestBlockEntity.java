@@ -27,7 +27,7 @@ public class AmazingChestBlockEntity extends ChestBlockEntity {
 
     @Override
     protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return AcScreenHandler.create(syncId, playerInventory, this);
+        return AcScreenHandler.createSingle(syncId, playerInventory, this);
     }
 
 }

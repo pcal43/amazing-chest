@@ -16,40 +16,43 @@ import static net.pcal.amazingchest.AcUtils.containsAtLeast;
 
 public class AcScreenHandler extends GenericContainerScreenHandler {
 
+    private static final int COLUMNS = 9;
+    private static final int SINGLE_ROWS = 3;
+    private static final int DOUBLE_ROWS = 6;
+
     private boolean locked = true;
-//https://forums.minecraftforge.net/topic/24747-how-to-properly-send-a-packet-on-a-button-click/
-// https://github.com/kyrptonaught/Inventory-Sorter/blob/3224991c945a85926f0e73791ffa6f8a5b160a8d/src/main/java/net/kyrptonaught/inventorysorter/network/InventorySortPacket.java
+
     private AcScreenHandler(ScreenHandlerType<GenericContainerScreenHandler> type, int syncId, PlayerInventory playerInventory, Inventory amazingChest, int rows) {
         super(type, syncId, playerInventory, amazingChest, rows);
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < rows * COLUMNS; i++) {
             super.slots.set(i, new AmazingSlot(super.slots.get(i)));
         }
     }
 
-    static ScreenHandler create(int syncId, PlayerInventory playerInventory, Inventory amazingChest) {
-        return new AcScreenHandler(AcIdentifiers.getScreenHandlerType(), syncId, playerInventory, amazingChest, 3);
+    static ScreenHandler createSingle(int syncId, PlayerInventory playerInventory, Inventory amazingChest) {
+        return new AcScreenHandler(AcIdentifiers.getSingleScreenHandlerType(), syncId, playerInventory, amazingChest, SINGLE_ROWS);
     }
 
-    static ScreenHandler createForRegistration(int syncId, PlayerInventory playerInventory) {
-        return new AcScreenHandler(AcIdentifiers.getScreenHandlerType(), syncId, playerInventory, new SimpleInventory(9 * 3), 3);
+    static ScreenHandler createDouble(int syncId, PlayerInventory playerInventory, Inventory amazingChest) {
+        return new AcScreenHandler(AcIdentifiers.getDoubleScreenHandlerType(), syncId, playerInventory, amazingChest, DOUBLE_ROWS);
     }
 
-    public boolean toggleLocked() {
-        this.locked = !this.locked;
-        return this.locked;
+    static ScreenHandler registerSingle(int syncId, PlayerInventory playerInventory) {
+        return new AcScreenHandler(AcIdentifiers.getSingleScreenHandlerType(), syncId, playerInventory, new SimpleInventory(COLUMNS * SINGLE_ROWS), SINGLE_ROWS);
+    }
+
+    static ScreenHandler registerDouble(int syncId, PlayerInventory playerInventory) {
+        return new AcScreenHandler(AcIdentifiers.getDoubleScreenHandlerType(), syncId, playerInventory, new SimpleInventory(COLUMNS * DOUBLE_ROWS), DOUBLE_ROWS);
     }
 
     public void setLocked(boolean locked) {
         this.locked = locked;
     }
 
-    public boolean isLocked() {
-        return this.locked;
-    }
 
     @Override
     public ItemStack transferSlot(PlayerEntity player, int index) {
-        if (!this.locked || index > 27) return super.transferSlot(player, index);
+        if (!this.locked || index > this.getRows() * COLUMNS) return super.transferSlot(player, index);
         Slot slot = this.slots.get(index);
         if (slot == null || !slot.hasStack()) {
             return ItemStack.EMPTY;
@@ -66,7 +69,7 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
             stack.setCount(stack.getCount() - 1);
         }
         Inventory i = this.getInventory();
-        if (index < this.getRows() * 9 ? !this.insertItem(stack, this.getRows() * 9, this.slots.size(), true) : !this.insertItem(stack, 0, this.getRows() * 9, false)) {
+        if (index < this.getRows() * COLUMNS ? !this.insertItem(stack, this.getRows() * COLUMNS, this.slots.size(), true) : !this.insertItem(stack, 0, this.getRows() * COLUMNS, false)) {
             return ItemStack.EMPTY;
         }
         slot.setStack(leftover);
@@ -85,7 +88,7 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
         public Optional<ItemStack> tryTakeStackRange(int min, int max, PlayerEntity player) {
             ItemStack itemStack = super.getStack();
             // i don't think it's actually 'min' - seems to be the actual number they're trying to grab
-            if (!AcScreenHandler.this.locked || containsAtLeast(AcScreenHandler.this.getInventory(), itemStack.getItem(), min+1)) {
+            if (!AcScreenHandler.this.locked || containsAtLeast(AcScreenHandler.this.getInventory(), itemStack.getItem(), min + 1)) {
                 return super.tryTakeStackRange(min, max, player);
             } else {
                 return super.tryTakeStackRange(min - 1, max, player);

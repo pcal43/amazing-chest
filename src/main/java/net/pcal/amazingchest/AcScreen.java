@@ -13,40 +13,50 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
+import static java.util.Objects.requireNonNull;
 import static net.pcal.amazingchest.AcIdentifiers.MOD_ID;
 
+/**
+ * Like the regular chest screen but adds the 'last item locking' behavior.
+ */
 public class AcScreen extends GenericContainerScreen {
 
-    public static final Identifier texture = new Identifier(MOD_ID, "textures/gui/button.png");
+    private static final int BUTTON_WIDTH = 20;
+    private static final int BUTTON_HEIGHT = 18;
 
     public AcScreen(GenericContainerScreenHandler handler, PlayerInventory inventory, Text title) {
         super(handler, inventory, title);
     }
 
-    private static final int BUTTON_WIDTH = 20;
     @Override
     protected void init() {
         super.init();
-        MinecraftClient.getInstance().getTextureManager().bindTexture(AcScreen.texture);
-        LockButtonWidget button = new LockButtonWidget(this.x + this.backgroundWidth - (BUTTON_WIDTH * 2 + 8), this.y + 6);
+        LockButtonWidget button = new LockButtonWidget(this.x + this.backgroundWidth - (BUTTON_WIDTH * 2), this.y + 6);
         this.addDrawableChild(button);
     }
 
     @Environment(EnvType.CLIENT)
     public static class LockButtonWidget extends ToggleButtonWidget {
-        private static final Identifier texture = new Identifier(MOD_ID, "textures/gui/button.png");
+
+        private static final int TEXTURE_WIDTH = 20;
+        private static final int TEXTURE_HEIGHT = 37;
+
+        private static final Identifier texture = new Identifier(MOD_ID, "textures/gui/lock.png");
+        private final MinecraftClient client;
 
         public LockButtonWidget(int x, int y) {
-            super(x,y , 20, 18, false);
+            super(x,y , BUTTON_WIDTH, BUTTON_HEIGHT, false);
+            this.client = requireNonNull(MinecraftClient.getInstance());
+            this.client.getTextureManager().bindTexture(texture);
         }
 
         @Override
         public void onClick(double mouseX, double mouseY) {
-            System.out.println("push!");
             super.setToggled(!super.isToggled());
-            LockPacket.sendLockPacket(isToggled());
+            AcLockPacket.sendLockPacket(isLocked());
         }
 
         @Override
@@ -57,35 +67,17 @@ public class AcScreen extends GenericContainerScreen {
             matrixStack.push();
             matrixStack.scale(.5f, .5f, 1);
             matrixStack.translate(x, y, 0);
-            drawTexture(matrixStack, this.x, this.y, 0, this.isToggled() ? 19 : 0, 20, 18, 20, 37);
-            //this.renderTooltip(matrixStack, int_1, int_2);
+            drawTexture(matrixStack, this.x, this.y, 0, this.isLocked() ? 0 : 19, BUTTON_WIDTH, BUTTON_HEIGHT, TEXTURE_WIDTH, TEXTURE_HEIGHT);
             matrixStack.pop();
+            if (client.currentScreen != null && isHovered()) {
+                final String tooltipText = "amazingchest.tooltip." + (this.isLocked() ? "locked" : "unlocked");
+                MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack,  new TranslatableText(tooltipText), x, y);
+            }
         }
-/**
- @Override
- public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
- int current = InventorySorterModClient.getConfig().sortType.ordinal();
- if (amount > 0) {
- current++;
- if (current >= SortCases.SortType.values().length)
- current = 0;
- } else {
- current--;
- if (current < 0)
- current = SortCases.SortType.values().length - 1;
- }
- InventorySorterModClient.getConfig().sortType = SortCases.SortType.values()[current];
- InventorySorterMod.configManager.save();
- InventorySorterModClient.syncConfig();
- return true;
- }
 
- @Override
- public void renderTooltip(MatrixStack matrices, int mouseX, int mouseY) {
- if (InventorySorterModClient.getConfig().displayTooltip && this.isHovered())
- MinecraftClient.getInstance().currentScreen.renderTooltip(matrices, new LiteralText("Sort by: " + StringUtils.capitalize(InventorySorterModClient.getConfig().sortType.toString().toLowerCase())), x, y);
- }
- */
+        private boolean isLocked() {
+            return !super.isToggled();
+        }
     }
 
 }

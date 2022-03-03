@@ -1,4 +1,6 @@
 {
   "block.amazingchest.amazing_chest" : "Sorting Chest",
-  "block.amazingchest.amazing_chest_double" : "Large Sorting Chest"
+  "block.amazingchest.amazing_chest_double" : "Large Sorting Chest",
+  "amazingchest.tooltip.locked" : "Last items are locked.  Click to unlock.",
+  "amazingchest.tooltip.unlocked" : "Unlocked.  Click to lock last items."
 }

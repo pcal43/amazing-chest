@@ -18,7 +18,8 @@ public abstract class AcIdentifiers {
     public static final Identifier AC_BLOCK_ENTITY_TYPE_ID = new Identifier(MOD_ID + ":amazing_chest_entity");
     public static final Identifier AC_ITEM_ID = new Identifier(MOD_ID + ":amazing_chest");
     public static final Identifier AC_BLOCK_ID = new Identifier(MOD_ID + ":amazing_chest");
-    public static final Identifier AC_SCREEN_ID = new Identifier(MOD_ID + ":amazing_chest");
+    public static final Identifier AC_SINGLE_SCREEN_ID = new Identifier(MOD_ID + ":amazing_chest_single");
+    public static final Identifier AC_DOUBLE_SCREEN_ID = new Identifier(MOD_ID + ":amazing_chest_double");
 
     public static AmazingChestBlock getAcBlock() {
         return (AmazingChestBlock) requireNonNull(Registry.BLOCK.get(AC_BLOCK_ID));
@@ -30,10 +31,15 @@ public abstract class AcIdentifiers {
                 requireNonNull(Registry.BLOCK_ENTITY_TYPE.get(AC_BLOCK_ENTITY_TYPE_ID));
     }
 
-    public static ScreenHandlerType<GenericContainerScreenHandler> getScreenHandlerType() {
+    public static ScreenHandlerType<GenericContainerScreenHandler> getDoubleScreenHandlerType() {
         //noinspection unchecked
         return requireNonNull((ScreenHandlerType<GenericContainerScreenHandler>)
-                Registry.SCREEN_HANDLER.get(AC_SCREEN_ID));
+                Registry.SCREEN_HANDLER.get(AC_DOUBLE_SCREEN_ID));
+    }
+    public static ScreenHandlerType<GenericContainerScreenHandler> getSingleScreenHandlerType() {
+        //noinspection unchecked
+        return requireNonNull((ScreenHandlerType<GenericContainerScreenHandler>)
+                Registry.SCREEN_HANDLER.get(AC_SINGLE_SCREEN_ID));
     }
 
 }
