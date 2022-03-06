@@ -4,9 +4,11 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
+import net.fabricmc.fabric.api.client.screenhandler.v1.ScreenRegistry;
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.TexturedRenderLayers;
@@ -29,13 +31,7 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 import static net.minecraft.util.registry.Registry.register;
-import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ENTITY_TYPE_ID;
-import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ID;
-import static net.pcal.amazingchest.AcIdentifiers.AC_ITEM_ID;
-import static net.pcal.amazingchest.AcIdentifiers.AC_TEXTURE;
-import static net.pcal.amazingchest.AcIdentifiers.AC_TEXTURE_LEFT;
-import static net.pcal.amazingchest.AcIdentifiers.AC_TEXTURE_RIGHT;
-import static net.pcal.amazingchest.AcIdentifiers.LOG_PREFIX;
+import static net.pcal.amazingchest.AcIdentifiers.*;
 
 public class AcInitializer implements ModInitializer, ClientModInitializer {
 
@@ -59,6 +55,8 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
     public void onInitializeClient() {
         new ExactlyOnceServiceInitializer();
         // client stuff
+        ScreenRegistry.register(AcIdentifiers.getSingleScreenHandlerType(), AcScreen::new);
+        ScreenRegistry.register(AcIdentifiers.getDoubleScreenHandlerType(), AcScreen::new);
         BlockEntityType<AmazingChestBlockEntity> entityType = AcIdentifiers.getAcBlockEntityType();
         BlockEntityRendererRegistry.register(entityType, ChestBlockEntityRenderer::new);
         ClientSpriteRegistryCallback.event(TexturedRenderLayers.CHEST_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
@@ -66,6 +64,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
             registry.register(AC_TEXTURE_RIGHT);
             registry.register(AC_TEXTURE_LEFT);
         });
+
         AmazingChestBlock acBlock = AcIdentifiers.getAcBlock();
         BuiltinItemRendererRegistry.INSTANCE.register(acBlock, (stack, mode, matrices, vertexConsumers, light, overlay) -> {
             MinecraftClient.getInstance().getBlockEntityRenderDispatcher().renderEntity(entityType.
@@ -121,6 +120,9 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
                 logger.info(LOG_PREFIX + "cachePolicy set to " + cachePolicy);
             }
             AcService.initialize(cachePolicy, logger);
+
+            AcLockPacket.registerReceivePacket();
+
             //
             // register blocks
             final String polymerEnabled = config.getProperty("polymer-enabled");
@@ -142,6 +144,8 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
      * Create and register all of our blocks and items for non-polymer mode.
      */
     private static void doStandardRegistrations() {
+        ScreenHandlerRegistry.registerSimple(AC_SINGLE_SCREEN_ID, AcScreenHandler::registerSingle);
+        ScreenHandlerRegistry.registerSimple(AC_DOUBLE_SCREEN_ID, AcScreenHandler::registerDouble);
         final AmazingChestBlock acBlock = new AmazingChestBlock();
         final BlockItem acItem = new BlockItem(acBlock, new Item.Settings().group(ItemGroup.REDSTONE));
         //acItem.appendBlocks(Item.BLOCK_ITEMS, acItem); // wat

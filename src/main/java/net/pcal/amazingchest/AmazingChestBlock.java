@@ -11,7 +11,6 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.particle.DustParticleEffect;
-import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
@@ -26,10 +25,6 @@ import java.util.Random;
 
 public class AmazingChestBlock extends ChestBlock {
 
-    public static Settings getDefaultSettings() {
-        return FabricBlockSettings.copyOf(Blocks.CHEST);
-    }
-
     public AmazingChestBlock() {
         super(FabricBlockSettings.copyOf(Blocks.CHEST), () -> AcIdentifiers.getAcBlockEntityType());
     }
@@ -42,21 +37,13 @@ public class AmazingChestBlock extends ChestBlock {
     @Override
     public void randomDisplayTick(BlockState state, World world, BlockPos pos, Random random) {
         // TODO add BlockState so we can show particles only when chest contains items?
-
-
         if (Math.abs(random.nextInt()) % 4 > 0) return;
-
         final DoubleBlockProperties.Type dt = getDoubleBlockType(state);
-
         if (dt == DoubleBlockProperties.Type.SECOND) return;
-
         Direction direction = state.get(FACING);
-
         for (int i = 0, j=Math.abs(random.nextInt()) % 4; i < j; i++) {
             direction = direction.rotateYClockwise();
         }
-
-
         double d = (double)pos.getX() + 0.5 + (random.nextDouble() - 0.5) * 0.2;
         double e = (double)pos.getY() + 0.4 + (random.nextDouble() - 0.5) * 0.2;
         double f = (double)pos.getZ() + 0.5 + (random.nextDouble() - 0.5) * 0.2;
@@ -80,7 +67,7 @@ public class AmazingChestBlock extends ChestBlock {
         return this.getBlockEntitySource(state, world, pos, false).apply(NAME_RETRIEVER).orElse(null);
     }
 
-    private static final DoubleBlockProperties.PropertyRetriever<ChestBlockEntity, Optional<NamedScreenHandlerFactory>> NAME_RETRIEVER = new DoubleBlockProperties.PropertyRetriever<ChestBlockEntity, Optional<NamedScreenHandlerFactory>>() {
+    private static final DoubleBlockProperties.PropertyRetriever<ChestBlockEntity, Optional<NamedScreenHandlerFactory>> NAME_RETRIEVER = new DoubleBlockProperties.PropertyRetriever<>() {
 
         @Override
         public Optional<NamedScreenHandlerFactory> getFromBoth(final ChestBlockEntity chestBlockEntity, final ChestBlockEntity chestBlockEntity2) {
@@ -89,11 +76,11 @@ public class AmazingChestBlock extends ChestBlock {
 
                 @Override
                 @Nullable
-                public ScreenHandler createMenu(int i, PlayerInventory playerInventory, PlayerEntity playerEntity) {
+                public ScreenHandler createMenu(int syncId, PlayerInventory playerInventory, PlayerEntity playerEntity) {
                     if (chestBlockEntity.checkUnlocked(playerEntity) && chestBlockEntity2.checkUnlocked(playerEntity)) {
                         chestBlockEntity.checkLootInteraction(playerInventory.player);
                         chestBlockEntity2.checkLootInteraction(playerInventory.player);
-                        return GenericContainerScreenHandler.createGeneric9x6(i, playerInventory, inventory);
+                        return AcScreenHandler.createDouble(syncId, playerInventory, inventory);
                     }
                     return null;
                 }
@@ -120,6 +107,5 @@ public class AmazingChestBlock extends ChestBlock {
         public Optional<NamedScreenHandlerFactory> getFallback() {
             return Optional.empty();
         }
-
     };
 }
