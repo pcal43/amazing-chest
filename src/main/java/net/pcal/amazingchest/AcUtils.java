@@ -19,7 +19,7 @@ public interface AcUtils {
         requireNonNull(item, "item");
         final Inventory inventory = getInventoryFor(ace);
         if (inventory == null) {
-            AcService.getInstance().getLogger().warn("Unexpected null Inventory for SortingChest at "+ace.getPos());
+            AcService.getInstance().getLogger().debug(()->"Unexpected null Inventory for SortingChest at "+ace.getPos());
             return false;
         }
         return containsAtLeast(inventory, item, atLeast);
@@ -41,7 +41,6 @@ public interface AcUtils {
 
     @SuppressWarnings("unchecked")
     static <B, T extends B> T as(B block, Class<T> clazz) {
-        requireNonNull(block, "block");
         requireNonNull(clazz, "clazz");
         return clazz.isInstance(block) ? (T)block : null;
     }
