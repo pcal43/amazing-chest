@@ -19,7 +19,8 @@ public interface AcUtils {
         requireNonNull(item, "item");
         final Inventory inventory = getInventoryFor(ace);
         if (inventory == null) {
-            AcService.getInstance().getLogger().debug(()->"Unexpected null Inventory for SortingChest at "+ace.getPos());
+            // inventory seems to be null for empty chests
+            AcService.getInstance().getLogger().debug(()->"null Inventory for SortingChest at "+ace.getPos());
             return false;
         }
         return containsAtLeast(inventory, item, atLeast);

@@ -185,10 +185,13 @@ public class AcService implements PlayerBlockBreakEvents.After {
         // If pulling from an amazing chest, never take the last item of a given type.  That way, the
         // filtering behavior will be preserved.
         final World world = requireNonNull(pullFromMinecart.getWorld());
+        // FIXME? calculation doesn't seem to be right.  But we're probably going to need to rework the hopper
+        // identification anyway.
         final BlockEntity pullingBlock = world.getBlockEntity(pullFromMinecart.getBlockPos().offset(DOWN));
         final HopperBlockEntity pullingHopper = as(pullingBlock, HopperBlockEntity.class);
         if (pullingHopper == null) {
-            logger.warn(LOG_PREFIX + "shouldVetoPullFromMinecart() unexpectedly called for a non hopper: " + pullingBlock);
+            logger.warn(LOG_PREFIX + "shouldVetoPullFromMinecart() unexpectedly called from minecart at " +
+                    pullFromMinecart.getBlockPos()+" to a non hopper: " + pullingBlock);
             return false;
         }
         return getTransferDisposition(pullingHopper, stack.getItem()) == REJECT;
