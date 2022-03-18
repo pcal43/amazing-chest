@@ -190,7 +190,7 @@ public class AcService implements PlayerBlockBreakEvents.After {
         final BlockEntity pullingBlock = world.getBlockEntity(pullFromMinecart.getBlockPos().offset(DOWN));
         final HopperBlockEntity pullingHopper = as(pullingBlock, HopperBlockEntity.class);
         if (pullingHopper == null) {
-            logger.warn(LOG_PREFIX + "shouldVetoPullFromMinecart() unexpectedly called from minecart at " +
+            logger.debug(LOG_PREFIX + "shouldVetoPullFromMinecart() unexpectedly called from minecart at " +
                     pullFromMinecart.getBlockPos()+" to a non hopper: " + pullingBlock);
             return false;
         }
