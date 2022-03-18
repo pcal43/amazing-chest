@@ -72,6 +72,13 @@ public class AcService implements PlayerBlockBreakEvents.After {
     private final AcReachabilityCache<HopperBlockEntity, Item> cache;
 
     // ===================================================================================
+    // Public methods
+
+    Logger getLogger() {
+        return this.logger;
+    }
+
+    // ===================================================================================
     // PlayerBlockBreakEvents listener
 
     @Override
