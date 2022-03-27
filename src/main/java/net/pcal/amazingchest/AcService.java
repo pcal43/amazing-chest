@@ -139,17 +139,13 @@ public class AcService implements PlayerBlockBreakEvents.After {
         if (this.cachePolicy == CacheInvalidationPolicy.NO_CACHE) {
             this.cache.clearCache();
         }
-        final HopperBlockEntity pullFromHopper = as(pullFrom, HopperBlockEntity.class);
-        if (pullFromHopper != null) {
-            return shouldVetoPullFromHopper(pullFromHopper, stack);
-        }
-        final BlockEntity pullFromBlock = as(pullFrom, BlockEntity.class);
-        if (pullFromBlock != null) {
-            return shouldVetoPullFromBlock(pullFromBlock, stack);
-        }
         final AmazingChestBlockEntity pullFromAc = as(pullFrom, AmazingChestBlockEntity.class);
         if (pullFromAc != null) {
             return shouldVetoPullFromAC(pullFromAc, stack);
+        }
+        final HopperBlockEntity pullFromHopper = as(pullFrom, HopperBlockEntity.class);
+        if (pullFromHopper != null) {
+            return shouldVetoPullFromHopper(pullFromHopper, stack);
         }
         final HopperMinecartEntity hopperMinecart = as(pullFrom, HopperMinecartEntity.class);
         if (hopperMinecart != null) {
@@ -163,6 +159,11 @@ public class AcService implements PlayerBlockBreakEvents.After {
             // hopper.
             return false;
         }
+        final BlockEntity pullFromBlock = as(pullFrom, BlockEntity.class);
+        if (pullFromBlock != null) {
+            return shouldVetoPullFromBlock(pullFromBlock, stack);
+        }
+
         this.logger.warn("Ignoring attempt to pull "+stack.getItem().getName()+" from unknown Inventory type "+pullFrom);
         return false;
     }
