@@ -1,9 +1,7 @@
 package net.pcal.amazingchest.mixins;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.Hopper;
 import net.minecraft.block.entity.HopperBlockEntity;
-import net.minecraft.entity.ItemEntity;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
