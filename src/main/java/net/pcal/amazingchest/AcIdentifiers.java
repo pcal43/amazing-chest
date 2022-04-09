@@ -33,13 +33,12 @@ public abstract class AcIdentifiers {
 
     public static ScreenHandlerType<GenericContainerScreenHandler> getDoubleScreenHandlerType() {
         //noinspection unchecked
-        return /*requireNonNull*/((ScreenHandlerType<GenericContainerScreenHandler>)
+        return requireNonNull((ScreenHandlerType<GenericContainerScreenHandler>)
                 Registry.SCREEN_HANDLER.get(AC_DOUBLE_SCREEN_ID));
-
     }
     public static ScreenHandlerType<GenericContainerScreenHandler> getSingleScreenHandlerType() {
         //noinspection unchecked
-        return /*requireNonNull*/((ScreenHandlerType<GenericContainerScreenHandler>)
+        return requireNonNull((ScreenHandlerType<GenericContainerScreenHandler>)
                 Registry.SCREEN_HANDLER.get(AC_SINGLE_SCREEN_ID));
     }
 
