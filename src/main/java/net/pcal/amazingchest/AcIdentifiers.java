@@ -35,6 +35,7 @@ public abstract class AcIdentifiers {
         //noinspection unchecked
         return /*requireNonNull*/((ScreenHandlerType<GenericContainerScreenHandler>)
                 Registry.SCREEN_HANDLER.get(AC_DOUBLE_SCREEN_ID));
+
     }
     public static ScreenHandlerType<GenericContainerScreenHandler> getSingleScreenHandlerType() {
         //noinspection unchecked

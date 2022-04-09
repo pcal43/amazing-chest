@@ -3,6 +3,7 @@ package net.pcal.amazingchest.polymer;
 import eu.pb4.polymer.api.block.PolymerBlockUtils;
 import eu.pb4.polymer.api.resourcepack.PolymerRPUtils;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
@@ -28,5 +29,6 @@ public class PolymerBlockRegistrar implements Runnable {
         Registry.register(Registry.ITEM, AC_ITEM_ID, acItem);
         Registry.register(Registry.BLOCK, AC_BLOCK_ID, acBlock);
         PolymerBlockUtils.registerBlockEntity(acEntityType);
+
     }
 }
