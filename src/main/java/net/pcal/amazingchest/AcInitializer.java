@@ -31,7 +31,15 @@ import java.nio.file.Paths;
 import java.util.Properties;
 
 import static net.minecraft.util.registry.Registry.register;
-import static net.pcal.amazingchest.AcIdentifiers.*;
+import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ENTITY_TYPE_ID;
+import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ID;
+import static net.pcal.amazingchest.AcIdentifiers.AC_DOUBLE_SCREEN_ID;
+import static net.pcal.amazingchest.AcIdentifiers.AC_ITEM_ID;
+import static net.pcal.amazingchest.AcIdentifiers.AC_SINGLE_SCREEN_ID;
+import static net.pcal.amazingchest.AcIdentifiers.AC_TEXTURE;
+import static net.pcal.amazingchest.AcIdentifiers.AC_TEXTURE_LEFT;
+import static net.pcal.amazingchest.AcIdentifiers.AC_TEXTURE_RIGHT;
+import static net.pcal.amazingchest.AcIdentifiers.LOG_PREFIX;
 
 public class AcInitializer implements ModInitializer, ClientModInitializer {
 
@@ -41,7 +49,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
     private static final String CONFIG_FILENAME = "amazingchest.properties";
     private static final String DEFAULT_CONFIG_FILENAME = "default-amazingchest.properties";
     private static final String LOGGER_NAME = "net.pcal.amazingchest.AcService";
-    private static final String POLYMER_REGISTRAR_CLASS = "net.pcal.amazingchest.polymer.PolymerRegistrar";
+    private static final String POLYMER_REGISTRAR_CLASS = "net.pcal.amazingchest.polymer.PolymerBlockRegistrar";
 
     // ===================================================================================
     // Initializer implementation
