@@ -8,9 +8,9 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.registry.Registry;
+import net.pcal.amazingchest.AcIdentifiers;
 import net.pcal.amazingchest.AmazingChestBlockEntity;
 import net.pcal.amazingchest.AmazingChestItem;
-
 import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ENTITY_TYPE_ID;
 import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ID;
 import static net.pcal.amazingchest.AcIdentifiers.AC_ITEM_ID;
@@ -22,13 +22,12 @@ public class PolymerBlockRegistrar implements Runnable {
     public void run() {
         PolymerRPUtils.addAssetSource("amazingchest");
         final PolymerAmazingChestBlock acBlock = new PolymerAmazingChestBlock();
-        final BlockEntityType<AmazingChestBlockEntity> acEntityType = Registry.register(Registry.BLOCK_ENTITY_TYPE, AC_BLOCK_ENTITY_TYPE_ID,
-                FabricBlockEntityTypeBuilder.create(AmazingChestBlockEntity::new, acBlock).build(null));
         final AmazingChestItem acItem = new PolymerAmazingChestItem(acBlock, new Item.Settings().group(ItemGroup.REDSTONE));
         acItem.appendBlocks(Item.BLOCK_ITEMS, acItem); // wat
         Registry.register(Registry.ITEM, AC_ITEM_ID, acItem);
         Registry.register(Registry.BLOCK, AC_BLOCK_ID, acBlock);
-        PolymerBlockUtils.registerBlockEntity(acEntityType);
-
+        Registry.register(Registry.BLOCK_ENTITY_TYPE, AC_BLOCK_ENTITY_TYPE_ID,
+                FabricBlockEntityTypeBuilder.create(PolymerAmazingChestBlockEntity::new, acBlock).build(null));
+        PolymerBlockUtils.registerBlockEntity(AcIdentifiers.getAcBlockEntityType());
     }
 }

@@ -79,6 +79,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
                     instantiate(BlockPos.ORIGIN, acBlock.getDefaultState()), matrices, vertexConsumers, light, overlay);
         });
     }
+    
     // ===================================================================================
     // Private
 
@@ -133,15 +134,17 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
 
             //
             // register blocks
-            final String polymerEnabled = config.getProperty("polymer-enabled");
-            if ("true".equals(polymerEnabled)) {
-                logger.info("Initializing polymer.");
+            final boolean polymerEnabled = "true".equals(config.getProperty("polymer-enabled"));
+            if (polymerEnabled) {
+                logger.debug("Initializing polymer.");
                 ((Runnable) Class.forName(POLYMER_REGISTRAR_CLASS).getDeclaredConstructor().newInstance()).run();
             } else {
                 doStandardRegistrations();
             }
             PlayerBlockBreakEvents.AFTER.register(AcService.getInstance());
-            logger.info(LOG_PREFIX + "Initialized");
+            logger.info(polymerEnabled ?
+                    LOG_PREFIX + "Initialized. Vanilla client support is enabled." :
+                    LOG_PREFIX + "Initialized.");
         } catch (Exception e) {
             logger.catching(Level.ERROR, e);
             logger.error(LOG_PREFIX + "Failed to initialize");
@@ -154,7 +157,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
     private static void doStandardRegistrations() {
         ScreenHandlerRegistry.registerSimple(AC_SINGLE_SCREEN_ID, AcScreenHandler::registerSingle);
         ScreenHandlerRegistry.registerSimple(AC_DOUBLE_SCREEN_ID, AcScreenHandler::registerDouble);
-        final AmazingChestBlock acBlock = new AmazingChestBlock();
+        final AmazingChestBlock acBlock = new AmazingChestBlock(true);
         final BlockItem acItem = new BlockItem(acBlock, new Item.Settings().group(ItemGroup.REDSTONE));
         //acItem.appendBlocks(Item.BLOCK_ITEMS, acItem); // wat
         register(Registry.BLOCK_ENTITY_TYPE, AC_BLOCK_ENTITY_TYPE_ID,
