@@ -1,6 +1,7 @@
 package net.pcal.amazingchest;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.DedicatedServerModInitializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.BlockEntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.BuiltinItemRendererRegistry;
@@ -48,7 +49,6 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
 
     private static final String CONFIG_FILENAME = "amazingchest.properties";
     private static final String DEFAULT_CONFIG_FILENAME = "default-amazingchest.properties";
-    private static final String LOGGER_NAME = "net.pcal.amazingchest.AcService";
     private static final String POLYMER_REGISTRAR_CLASS = "net.pcal.amazingchest.polymer.PolymerBlockRegistrar";
 
     // ===================================================================================
@@ -62,6 +62,8 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
     @Override
     public void onInitializeClient() {
         new ExactlyOnceServiceInitializer();
+        ScreenHandlerRegistry.registerSimple(AC_SINGLE_SCREEN_ID, AcScreenHandler::registerSingle);
+        ScreenHandlerRegistry.registerSimple(AC_DOUBLE_SCREEN_ID, AcScreenHandler::registerDouble);
         // client stuff
         ScreenRegistry.register(AcIdentifiers.getSingleScreenHandlerType(), AcScreen::new);
         ScreenRegistry.register(AcIdentifiers.getDoubleScreenHandlerType(), AcScreen::new);
@@ -79,7 +81,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
                     instantiate(BlockPos.ORIGIN, acBlock.getDefaultState()), matrices, vertexConsumers, light, overlay);
         });
     }
-    
+
     // ===================================================================================
     // Private
 
@@ -143,7 +145,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
             }
             PlayerBlockBreakEvents.AFTER.register(AcService.getInstance());
             logger.info(polymerEnabled ?
-                    LOG_PREFIX + "Initialized. Vanilla client support is enabled." :
+                    LOG_PREFIX + "Initialized with vanilla client support enabled." :
                     LOG_PREFIX + "Initialized.");
         } catch (Exception e) {
             logger.catching(Level.ERROR, e);
@@ -155,8 +157,6 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
      * Create and register all of our blocks and items for non-polymer mode.
      */
     private static void doStandardRegistrations() {
-        ScreenHandlerRegistry.registerSimple(AC_SINGLE_SCREEN_ID, AcScreenHandler::registerSingle);
-        ScreenHandlerRegistry.registerSimple(AC_DOUBLE_SCREEN_ID, AcScreenHandler::registerDouble);
         final AmazingChestBlock acBlock = new AmazingChestBlock(true);
         final BlockItem acItem = new BlockItem(acBlock, new Item.Settings().group(ItemGroup.REDSTONE));
         //acItem.appendBlocks(Item.BLOCK_ITEMS, acItem); // wat

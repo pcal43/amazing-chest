@@ -31,17 +31,11 @@ public class PolymerAmazingChestBlock extends AmazingChestBlock implements Polym
         return Blocks.TRAPPED_CHEST;
     }
 
-
-
-    /**
-     * Generic method used for replacing BlockStates in case of no player context
-     * It also controls some server side things like collisions
-     *
-     * @param state Server side/real BlockState
-     * @return BlockState visible on client
-     */
     @Override
     public BlockState getPolymerBlockState(BlockState state) {
-        return this.getPolymerBlock(state).getDefaultState().with(CHEST_TYPE, state.get(CHEST_TYPE));
+        return this.getPolymerBlock(state).getDefaultState().
+                with(CHEST_TYPE, state.get(CHEST_TYPE)).
+                with(FACING, state.get(FACING)).
+                with(WATERLOGGED, state.get(WATERLOGGED));
     }
 }
