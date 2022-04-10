@@ -25,8 +25,11 @@ import java.util.Random;
 
 public class AmazingChestBlock extends ChestBlock {
 
-    public AmazingChestBlock() {
+    private final boolean isCustomScreenEnabled;
+
+    public AmazingChestBlock(boolean isCustomScreenEnabled) {
         super(FabricBlockSettings.copyOf(Blocks.CHEST), () -> AcIdentifiers.getAcBlockEntityType());
+        this.isCustomScreenEnabled = isCustomScreenEnabled;
     }
 
     @Override
@@ -64,7 +67,11 @@ public class AmazingChestBlock extends ChestBlock {
     @Override
     @Nullable
     public NamedScreenHandlerFactory createScreenHandlerFactory(BlockState state, World world, BlockPos pos) {
-        return this.getBlockEntitySource(state, world, pos, false).apply(NAME_RETRIEVER).orElse(null);
+        if (this.isCustomScreenEnabled) {
+            return this.getBlockEntitySource(state, world, pos, false).apply(NAME_RETRIEVER).orElse(null);
+        } else {
+            return super.createScreenHandlerFactory(state, world, pos);
+        }
     }
 
     private static final DoubleBlockProperties.PropertyRetriever<ChestBlockEntity, Optional<NamedScreenHandlerFactory>> NAME_RETRIEVER = new DoubleBlockProperties.PropertyRetriever<>() {

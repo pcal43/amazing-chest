@@ -5,7 +5,6 @@ import net.pcal.amazingchest.AcReachabilityCache.Chest;
 import net.pcal.amazingchest.AcReachabilityCache.TransferDisposition;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

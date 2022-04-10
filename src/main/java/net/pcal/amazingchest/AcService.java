@@ -1,8 +1,6 @@
 package net.pcal.amazingchest;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.impl.registry.sync.FabricRegistry;
-import net.fabricmc.fabric.impl.registry.sync.RemappableRegistry;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -15,8 +13,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import org.apache.logging.log4j.Logger;
 import net.pcal.amazingchest.AcReachabilityCache.Chest;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
 
@@ -28,10 +26,9 @@ import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition;
 import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition.ACCEPT;
 import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition.DEMAND;
 import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition.REJECT;
+import static net.pcal.amazingchest.AcService.CacheInvalidationPolicy.AGGRESSIVE_INVALIDATION;
 import static net.pcal.amazingchest.AcUtils.as;
 import static net.pcal.amazingchest.AcUtils.containsAtLeast;
-
-import static net.pcal.amazingchest.AcService.CacheInvalidationPolicy.AGGRESSIVE_INVALIDATION;
 
 /**
  * Central singleton service.

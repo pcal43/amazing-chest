@@ -11,8 +11,15 @@ import net.minecraft.util.math.BlockPos;
 
 public class AmazingChestBlockEntity extends ChestBlockEntity {
 
+    private final boolean isCustomScreenEnabled;
+
     public AmazingChestBlockEntity(BlockPos pos, BlockState state) {
+        this(pos, state, true);
+    }
+
+    public AmazingChestBlockEntity(BlockPos pos, BlockState state, boolean isCustomScreenEnabled) {
         super(AcIdentifiers.getAcBlockEntityType(), pos, state);
+        this.isCustomScreenEnabled = isCustomScreenEnabled;
     }
 
     @Override
@@ -27,7 +34,11 @@ public class AmazingChestBlockEntity extends ChestBlockEntity {
 
     @Override
     protected ScreenHandler createScreenHandler(int syncId, PlayerInventory playerInventory) {
-        return AcScreenHandler.createSingle(syncId, playerInventory, this);
+        if (this.isCustomScreenEnabled) {
+            return AcScreenHandler.createSingle(syncId, playerInventory, this);
+        } else {
+            return super.createScreenHandler(syncId, playerInventory);
+        }
     }
 
 }
