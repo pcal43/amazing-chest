@@ -3,14 +3,12 @@ package net.pcal.amazingchest.polymer;
 import eu.pb4.polymer.api.block.PolymerBlockUtils;
 import eu.pb4.polymer.api.resourcepack.PolymerRPUtils;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
-import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
-import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.registry.Registry;
 import net.pcal.amazingchest.AcIdentifiers;
-import net.pcal.amazingchest.AmazingChestBlockEntity;
 import net.pcal.amazingchest.AmazingChestItem;
+
 import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ENTITY_TYPE_ID;
 import static net.pcal.amazingchest.AcIdentifiers.AC_BLOCK_ID;
 import static net.pcal.amazingchest.AcIdentifiers.AC_ITEM_ID;

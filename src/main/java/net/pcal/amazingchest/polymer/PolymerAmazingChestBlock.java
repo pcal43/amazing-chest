@@ -6,7 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.entity.BlockEntity;
-import net.minecraft.block.enums.ChestType;
 import net.minecraft.util.math.BlockPos;
 import net.pcal.amazingchest.AmazingChestBlock;
 
