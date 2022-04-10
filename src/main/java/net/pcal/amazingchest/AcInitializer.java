@@ -146,7 +146,7 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
             PlayerBlockBreakEvents.AFTER.register(AcService.getInstance());
             logger.info(polymerEnabled ?
                     LOG_PREFIX + "Initialized with vanilla client support enabled." :
-                    LOG_PREFIX + "Initialized.");
+                    LOG_PREFIX + "Initialized in normal mode.");
         } catch (Exception e) {
             logger.catching(Level.ERROR, e);
             logger.error(LOG_PREFIX + "Failed to initialize");
