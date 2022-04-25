@@ -1,6 +1,7 @@
 package net.pcal.amazingchest;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -10,6 +11,7 @@ import net.minecraft.inventory.DoubleInventory;
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
@@ -17,6 +19,8 @@ import net.pcal.amazingchest.AcReachabilityCache.Chest;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import static java.util.Objects.requireNonNull;
 import static net.minecraft.block.HopperBlock.FACING;
@@ -61,7 +65,7 @@ public class AcService implements PlayerBlockBreakEvents.After {
 
     private AcService(CacheInvalidationPolicy cachePolicy, AcReachabilityCache<HopperBlockEntity, Item> cache, Logger logger) {
         this.cachePolicy = requireNonNull(cachePolicy);
-        this.cache = requireNonNull(cache);
+        this.cachePerDimension = new HashMap<>();
         this.logger =  requireNonNull(logger);
     }
 
@@ -70,7 +74,7 @@ public class AcService implements PlayerBlockBreakEvents.After {
 
     private final Logger logger;
     private final CacheInvalidationPolicy cachePolicy;
-    private final AcReachabilityCache<HopperBlockEntity, Item> cache;
+    private final Map<Identifier, AcReachabilityCache<HopperBlockEntity, Item>> cachePerDimension;
 
     // ===================================================================================
     // Public methods
@@ -86,7 +90,7 @@ public class AcService implements PlayerBlockBreakEvents.After {
     public void afterBlockBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
         if (this.cachePolicy == AGGRESSIVE_INVALIDATION || blockEntity instanceof Inventory) {
             this.logger.debug(()-> AcIdentifiers.LOG_PREFIX + "clearing cache for breaking " + blockEntity);
-            this.cache.clearCache();
+            this.getCacheForDimension(world).clearCache();
         }
     }
 
@@ -98,7 +102,7 @@ public class AcService implements PlayerBlockBreakEvents.After {
         BlockEntity blockEntity = world.getBlockEntity(blockPos);
         if (this.cachePolicy == AGGRESSIVE_INVALIDATION || blockEntity instanceof Inventory) {
             this.logger.debug(()-> AcIdentifiers.LOG_PREFIX + "clearing cache for placing " + blockEntity);
-            this.cache.clearCache();
+            this.getCacheForDimension(world).clearCache();
         }
     }
 
@@ -111,7 +115,8 @@ public class AcService implements PlayerBlockBreakEvents.After {
             logger.warn(LOG_PREFIX + "shouldVetoPushFrom() unexpectedly called on a " + pushingInventory);
             return false;
         }
-        if (this.cachePolicy == CacheInvalidationPolicy.NO_CACHE) this.cache.clearCache();
+        final AcReachabilityCache<HopperBlockEntity, Item> cache = this.getCacheForDimension(world);
+        if (this.cachePolicy == CacheInvalidationPolicy.NO_CACHE) cache.clearCache();
         final Direction facing = hopper.getCachedState().get(FACING);
         final BlockPos pushToPos = hopper.getPos().offset(facing);
         final BlockEntity pushToBlock = world.getBlockEntity(pushToPos);
@@ -133,8 +138,9 @@ public class AcService implements PlayerBlockBreakEvents.After {
     }
 
     public boolean shouldVetoPullFrom(Inventory pullFrom, ItemStack stack, Direction ignored) {
+        final AcReachabilityCache<HopperBlockEntity, Item> cache = this.getCacheForDimension(pullFrom);
         if (this.cachePolicy == CacheInvalidationPolicy.NO_CACHE) {
-            this.cache.clearCache();
+            cache.clearCache();
         }
         final AmazingChestBlockEntity pullFromAc = as(pullFrom, AmazingChestBlockEntity.class);
         if (pullFromAc != null) {
@@ -231,10 +237,10 @@ public class AcService implements PlayerBlockBreakEvents.After {
         return false;
     }
 
-
     private TransferDisposition getTransferDisposition(BlockEntity targetBlock, Item item) {
         final HopperBlockEntity targetHopper = as(targetBlock, HopperBlockEntity.class);
         if (targetHopper != null) { // if we're pushing into another hopper
+            final AcReachabilityCache<HopperBlockEntity, Item> cache = this.getCacheForDimension(targetBlock.getWorld());
             return getTransferDisposition(cache.getReachableChests(targetHopper), item);
         }
         final AmazingChestBlockEntity targetAmazingChest = as(targetBlock, AmazingChestBlockEntity.class);
@@ -249,7 +255,7 @@ public class AcService implements PlayerBlockBreakEvents.After {
         }
     }
 
-    private TransferDisposition getTransferDisposition(Collection<Chest<Item>> chests, Item item) {
+    private static TransferDisposition getTransferDisposition(Collection<Chest<Item>> chests, Item item) {
         TransferDisposition currentPolicy = null;
         for (Chest<Item> chest : chests) {
             switch (chest.getDispositionToward(item)) {
@@ -263,5 +269,17 @@ public class AcService implements PlayerBlockBreakEvents.After {
             }
         }
         return currentPolicy;
+    }
+
+    private AcReachabilityCache<HopperBlockEntity, Item> getCacheForDimension(World world) {
+        final Identifier dimId = world.getRegistryKey().getValue();
+        if (!this.cachePerDimension.containsKey(dimId)) {
+            this.cachePerDimension.put(dimId, new AcReachabilityCache<>(AcReachabilityDelegate.INSTANCE, logger));
+        }
+        return this.cachePerDimension.get(dimId);
+    }
+
+    private AcReachabilityCache<HopperBlockEntity, Item> getCacheForDimension(Inventory pullFrom) {
+        return getCacheForDimension(((BlockEntity)pullFrom).getWorld());
     }
 }
