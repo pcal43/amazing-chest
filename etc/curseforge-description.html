@@ -3,11 +3,11 @@
     workshop organized so you can focus on other parts of the game?
 </p>
 <p>
-    <b>Amazing Chest</b> is for you!  It adds a new 'Sorting Chest' block to your world that will 
+    <b>Amazing Chest</b> is for you!  It adds a new 'Sorting Chest' block to your world that will
     will automatically pull matching items into itself from any connected hopper chain.
 </p>
 <p>
-    To set up item sorting, just put items in a Sorting Chest that you want to get sorted into it.  
+    To set up item sorting, just put items in a Sorting Chest that you want to get sorted into it.
     Any matching items (and only those items) will be routed to them through the hopper chain.
     It works a lot like a <a href="https://www.youtube.com/watch?v=wsNV9Mo00Gw">Tango Tek</a> sorting system
     (but without actually having to build one).
@@ -90,6 +90,29 @@
     If you also use Lithium, Amazing Chest won't work unless you set <code>mixin.block.hopper=false</code>
     in your <code>lithium.properties</code> file.  This will disable Lithium's hopper-related optimizations
     that are incompatible with Amazing Chest.  (Courtesy of <a href='https://www.curseforge.com/members/valkonmc'>valkonmc</a>)
+</p>
+
+<p></p>
+
+<h3>How do I set up the mod on my server to work with vanilla clients?</h3>
+<p>
+    Edit config/amazing-chest.properties and follow the instructions you find there:<br/>
+    <code>
+        #<br/>
+        # Uncomment the 'polymer-enabled' line if you want to run this mod on a server that works with vanilla clients<br/>
+        # or clients that don't have the mod installed.<br/>
+        #<br/>
+        # IMPORTANT: your server must have an appropriate version of polymer installed:<br/>
+        #   https://modrinth.com/mod/polymer/versions<br/>
+        #<br/>
+        # IMPORTANT: setting polymer-enabled will have the following effects for ALL clients connecting to your server:<br/>
+        # - Sorting Chests will appear as Trapped Chests (not custom graphics)<br/>
+        # - Labels will not be localized (all in English)<br/>
+        # - The 'lock button' will not be added to the UI Screen (no protection against messing up your sorting setup)<br/>
+        #<br/>
+        # polymer-enabled = true<br/>
+    </code>
+
 </p>
 
 <p></p>
