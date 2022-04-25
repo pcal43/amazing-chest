@@ -1,7 +1,6 @@
 package net.pcal.amazingchest;
 
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.HopperBlockEntity;
@@ -15,7 +14,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.pcal.amazingchest.AcReachabilityCache.Chest;
+import net.pcal.amazingchest.AcReachabilityCache.ReachableInventory;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collection;
@@ -86,6 +85,10 @@ public class AcService implements PlayerBlockBreakEvents.After {
     // ===================================================================================
     // PlayerBlockBreakEvents listener
 
+    /**
+     * When they break a hopper, chest or other inventory it may change the reachability graph.
+     * So, invalidate our cached view of it.  This could probably be made more efficient.
+     */
     @Override
     public void afterBlockBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, BlockEntity blockEntity) {
         if (this.cachePolicy == AGGRESSIVE_INVALIDATION || blockEntity instanceof Inventory) {
@@ -97,6 +100,10 @@ public class AcService implements PlayerBlockBreakEvents.After {
     // ===================================================================================
     // BlockItem postPlacement handler
 
+    /**
+     * When they place a hopper, chest or other inventory it may change the reachability graph.
+     * So, invalidate our cached view of it.  This could probably be made more efficient.
+     */
     public void afterBlockPlace(World world, BlockPos blockPos) {
         if (world.isClient()) return;
         BlockEntity blockEntity = world.getBlockEntity(blockPos);
@@ -109,6 +116,9 @@ public class AcService implements PlayerBlockBreakEvents.After {
     // ===================================================================================
     // Hopper behavior
 
+    /**
+     * Called from the mixin to see if we should veto a push from a given hopper.
+     */
     public boolean shouldVetoPushFrom(Inventory pushingInventory, Item item, World world, BlockPos pos) {
         final HopperBlockEntity hopper = as(pushingInventory, HopperBlockEntity.class);
         if (hopper == null) {
@@ -137,11 +147,10 @@ public class AcService implements PlayerBlockBreakEvents.After {
         return false;
     }
 
+    /**
+     * Called from the mixin to see if we should veto a pull into a given hopper.
+     */
     public boolean shouldVetoPullFrom(Inventory pullFrom, ItemStack stack, Direction ignored) {
-        final AcReachabilityCache<HopperBlockEntity, Item> cache = this.getCacheForDimension(pullFrom);
-        if (this.cachePolicy == CacheInvalidationPolicy.NO_CACHE) {
-            cache.clearCache();
-        }
         final AmazingChestBlockEntity pullFromAc = as(pullFrom, AmazingChestBlockEntity.class);
         if (pullFromAc != null) {
             return shouldVetoPullFromAC(pullFromAc, stack);
@@ -166,7 +175,6 @@ public class AcService implements PlayerBlockBreakEvents.After {
         if (pullFromBlock != null) {
             return shouldVetoPullFromBlock(pullFromBlock, stack);
         }
-
         this.logger.warn("Ignoring attempt to pull "+stack.getItem().getName()+" from unknown Inventory type "+pullFrom);
         return false;
     }
@@ -237,6 +245,10 @@ public class AcService implements PlayerBlockBreakEvents.After {
         return false;
     }
 
+    /**
+     * Get a sense of how the given target would feel about receiving the given item, accounting for
+     * reachable inventories.
+     */
     private TransferDisposition getTransferDisposition(BlockEntity targetBlock, Item item) {
         final HopperBlockEntity targetHopper = as(targetBlock, HopperBlockEntity.class);
         if (targetHopper != null) { // if we're pushing into another hopper
@@ -255,31 +267,39 @@ public class AcService implements PlayerBlockBreakEvents.After {
         }
     }
 
-    private static TransferDisposition getTransferDisposition(Collection<Chest<Item>> chests, Item item) {
+    /**
+     * Get a sense of how the given inventories would feel about receiving the given item, accounting for all
+     * the inventories that are reachable
+     */
+    private static TransferDisposition getTransferDisposition(Collection<ReachableInventory<Item>> reachableInventories, Item item) {
         TransferDisposition currentPolicy = null;
-        for (Chest<Item> chest : chests) {
-            switch (chest.getDispositionToward(item)) {
+        for (ReachableInventory<Item> reachableInventory : reachableInventories) {
+            switch (reachableInventory.getDispositionToward(item)) {
                 case DEMAND:
+                    // If anyone downstream demands it, we demand it, end of story
                     return DEMAND;
                 case REJECT:
+                    // If someone downstream rejects it, rejection becomes the default
                     if (currentPolicy != ACCEPT) currentPolicy = REJECT;
                     break;
                 case ACCEPT:
+                    // If someone downstream will accept it, acceptance becomes the default.  It can only
+                    // be upgraded to a demand.
                     currentPolicy = ACCEPT;
+                    break;
             }
         }
         return currentPolicy;
     }
 
+    /**
+     * Get the reachability cache for the given world (dimension).
+     */
     private AcReachabilityCache<HopperBlockEntity, Item> getCacheForDimension(World world) {
-        final Identifier dimId = world.getRegistryKey().getValue();
+        final Identifier dimId = world.getRegistryKey().getValue(); // this corresponds to dimension
         if (!this.cachePerDimension.containsKey(dimId)) {
             this.cachePerDimension.put(dimId, new AcReachabilityCache<>(AcReachabilityDelegate.INSTANCE, logger));
         }
-        return this.cachePerDimension.get(dimId);
-    }
-
-    private AcReachabilityCache<HopperBlockEntity, Item> getCacheForDimension(Inventory pullFrom) {
-        return getCacheForDimension(((BlockEntity)pullFrom).getWorld());
+        return requireNonNull(this.cachePerDimension.get(dimId));
     }
 }
