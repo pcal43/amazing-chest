@@ -8,7 +8,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
-import net.pcal.amazingchest.AcReachabilityCache.Chest;
+import net.pcal.amazingchest.AcReachabilityCache.ReachableInventory;
 import net.pcal.amazingchest.AcReachabilityCache.ReachabilityDelegate;
 import net.pcal.amazingchest.AcReachabilityCache.TransferDisposition;
 
@@ -26,13 +26,13 @@ public enum AcReachabilityDelegate implements ReachabilityDelegate<HopperBlockEn
     INSTANCE;
 
     @Override
-    public Pair<HopperBlockEntity[], Chest<Item>> getOutboundConnections(HopperBlockEntity fromHopper) {
+    public Pair<HopperBlockEntity[], ReachableInventory<Item>> getOutboundConnections(HopperBlockEntity fromHopper) {
         final World world = requireNonNull(fromHopper.getWorld());
         final Direction facing = fromHopper.getCachedState().get(FACING);
         final BlockPos pushPos = fromHopper.getPos().offset(facing);
         final BlockEntity pushBlock = world.getBlockEntity(pushPos);
 
-        final Chest<Item> pushChest;
+        final ReachableInventory<Item> pushChest;
         final AmazingChestBlockEntity pushAmazingChest = as(pushBlock, AmazingChestBlockEntity.class);
         final HopperBlockEntity pushHopper = pushAmazingChest == null ? as(pushBlock, HopperBlockEntity.class) : null;
         if (pushAmazingChest != null) {
@@ -66,7 +66,7 @@ public enum AcReachabilityDelegate implements ReachabilityDelegate<HopperBlockEn
         return elems;
     }
 
-    private enum RegularChest implements Chest<Item> {
+    private enum RegularChest implements ReachableInventory<Item> {
         INSTANCE;
         @Override
         public TransferDisposition getDispositionToward(Item item) {
@@ -75,7 +75,7 @@ public enum AcReachabilityDelegate implements ReachabilityDelegate<HopperBlockEn
     }
 
     @SuppressWarnings("ClassCanBeRecord")
-    private static class AmazingReachableChest implements Chest<Item> {
+    private static class AmazingReachableChest implements ReachableInventory<Item> {
 
         private final AmazingChestBlockEntity acbe;
 

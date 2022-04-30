@@ -21,7 +21,7 @@ class AcReachabilityCache<HOPPER, ITEM> {
     // ===================================================================================
     // Fields
 
-    private final Map<HOPPER, ImmutableList<Chest<ITEM>>> cache;
+    private final Map<HOPPER, ImmutableList<ReachableInventory<ITEM>>> cache;
     private final ReachabilityDelegate<HOPPER, ITEM> ctx;
     private final Logger logger;
 
@@ -41,8 +41,8 @@ class AcReachabilityCache<HOPPER, ITEM> {
         this.cache.clear();
     }
 
-    List<Chest<ITEM>> getReachableChests(HOPPER from) {
-        List<Chest<ITEM>> chests = this.cache.get(from);
+    List<ReachableInventory<ITEM>> getReachableChests(HOPPER from) {
+        List<ReachableInventory<ITEM>> chests = this.cache.get(from);
         if (chests == null) {
             chests = traverseHopperChain(from);
             if (chests == null) {
@@ -56,7 +56,7 @@ class AcReachabilityCache<HOPPER, ITEM> {
     // ===================================================================================
     // Private methods
 
-    private List<Chest<ITEM>> traverseHopperChain(HOPPER firstHopper) {
+    private List<ReachableInventory<ITEM>> traverseHopperChain(HOPPER firstHopper) {
         final Deque<HopperVisit<HOPPER, ITEM>> visitStack = new ArrayDeque<>();
         final HopperVisit<HOPPER, ITEM> firstVisit = HopperVisit.createFor(ctx, firstHopper);
         visitStack.add(firstVisit);
@@ -66,7 +66,7 @@ class AcReachabilityCache<HOPPER, ITEM> {
             mainLoop:
             if (currentVisit.hasNext()) {
                 final HOPPER nextHopper = currentVisit.next();
-                List<Chest<ITEM>> cached = cache.get(nextHopper);
+                List<ReachableInventory<ITEM>> cached = cache.get(nextHopper);
                 if (cached != null) {
                     // we already have a cached result for this hopper; just tell everyone about it
                     visitStack.forEach(previousVisit -> previousVisit.reachableChests.addAll(cached));
@@ -108,12 +108,12 @@ class AcReachabilityCache<HOPPER, ITEM> {
         DEMAND,
     }
 
-    interface Chest<I> {
+    interface ReachableInventory<I> {
         TransferDisposition getDispositionToward(I item);
     }
 
     interface ReachabilityDelegate<H, I> {
-        Pair<H[], Chest<I>> getOutboundConnections(H fromHopper);
+        Pair<H[], ReachableInventory<I>> getOutboundConnections(H fromHopper);
     }
 
     // ===================================================================================
@@ -123,14 +123,14 @@ class AcReachabilityCache<HOPPER, ITEM> {
 
         private final H hopper;
         private final Iterator<H> outboundIterator;
-        private final Set<Chest<I>> reachableChests;
+        private final Set<ReachableInventory<I>> reachableChests;
 
         static <H, I> HopperVisit<H, I> createFor(final ReachabilityDelegate<H, I> ctx, H hopper) {
-            Pair<H[], Chest<I>> pair = ctx.getOutboundConnections(hopper);
+            Pair<H[], ReachableInventory<I>> pair = ctx.getOutboundConnections(hopper);
             return new HopperVisit<H, I>(hopper, pair.getLeft(), pair.getRight());
         }
 
-        private HopperVisit(H hopper, H[] outboundHoppers, Chest<I> outboundChest) {
+        private HopperVisit(H hopper, H[] outboundHoppers, ReachableInventory<I> outboundChest) {
             this.hopper = requireNonNull(hopper);
             this.outboundIterator = outboundHoppers == null ? null :
                     List.of(outboundHoppers).iterator(); // stupid fixme.  ArrayIterator?

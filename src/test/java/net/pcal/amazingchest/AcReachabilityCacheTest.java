@@ -1,7 +1,7 @@
 package net.pcal.amazingchest;
 
 import net.minecraft.util.Pair;
-import net.pcal.amazingchest.AcReachabilityCache.Chest;
+import net.pcal.amazingchest.AcReachabilityCache.ReachableInventory;
 import net.pcal.amazingchest.AcReachabilityCache.TransferDisposition;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,7 +29,7 @@ public class AcReachabilityCacheTest {
         MockChest c1 = new MockChest("c1");
         MockHopper h2 = new MockHopper("h2", null, c1);
         MockHopper h1 = new MockHopper("h1", hoppers(h2), null);
-        List<Chest<MockItem>> chests = traverser.getReachableChests(h1);
+        List<ReachableInventory<MockItem>> chests = traverser.getReachableChests(h1);
         assertEquals(List.of(c1), chests);
     }
 
@@ -94,7 +94,7 @@ public class AcReachabilityCacheTest {
         INSTANCE;
 
         @Override
-        public Pair<MockHopper[], Chest<MockItem>> getOutboundConnections(MockHopper fromHopper) {
+        public Pair<MockHopper[], ReachableInventory<MockItem>> getOutboundConnections(MockHopper fromHopper) {
             return new Pair<>(fromHopper.outboundHoppers, fromHopper.outboundChest);
         }
     }
@@ -120,7 +120,7 @@ public class AcReachabilityCacheTest {
         }
     }
 
-    static class MockChest implements Chest<MockItem> {
+    static class MockChest implements ReachableInventory<MockItem> {
         static MockChest[] chests(MockChest... chests) {
             return chests;
         }
