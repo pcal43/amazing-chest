@@ -11,7 +11,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.screen.GenericContainerScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Identifier;
 
 import static java.util.Objects.requireNonNull;
@@ -69,7 +68,7 @@ public class AcScreen extends GenericContainerScreen {
             matrixStack.pop();
             if (client.currentScreen != null && isHovered()) {
                 final String tooltipText = "amazingchest.tooltip." + (this.isLocked() ? "locked" : "unlocked");
-                MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack,  new TranslatableText(tooltipText), x, y);
+                MinecraftClient.getInstance().currentScreen.renderTooltip(matrixStack,  Text.translatable(tooltipText), x, y);
             }
         }
 

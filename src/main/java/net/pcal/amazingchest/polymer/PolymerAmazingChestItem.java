@@ -8,7 +8,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.pcal.amazingchest.AmazingChestItem;
 import org.jetbrains.annotations.Nullable;
@@ -17,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 public class PolymerAmazingChestItem extends AmazingChestItem implements PolymerItem, PolymerKeepModel, PolymerClientDecoded {
 
     // FIXME i18n?
-    private static final Text NAME = new LiteralText("Sorting Chest");
+    private static final Text NAME = Text.literal("Sorting Chest");
 
     public PolymerAmazingChestItem(Block block, Settings settings) {
         super(block, settings);
