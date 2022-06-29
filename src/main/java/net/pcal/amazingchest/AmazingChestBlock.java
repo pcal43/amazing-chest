@@ -14,14 +14,13 @@ import net.minecraft.particle.DustParticleEffect;
 import net.minecraft.screen.NamedScreenHandlerFactory;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
-import java.util.Random;
+import net.minecraft.util.math.random.Random;
 
 public class AmazingChestBlock extends ChestBlock {
 
@@ -100,7 +99,7 @@ public class AmazingChestBlock extends ChestBlock {
                     if (chestBlockEntity2.hasCustomName()) {
                         return chestBlockEntity2.getDisplayName();
                     }
-                    return new TranslatableText("block.amazingchest.amazing_chest_double");
+                    return Text.translatable("block.amazingchest.amazing_chest_double");
                 }
             });
         }
