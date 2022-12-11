@@ -20,6 +20,8 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.pcal.amazingchest.AcService.CacheInvalidationPolicy;
+import net.pcal.amazingchest.AcService.PullPolicy;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -130,7 +132,20 @@ public class AcInitializer implements ModInitializer, ClientModInitializer {
                 cachePolicy = CacheInvalidationPolicy.valueOf(configuredCachePolicy);
                 logger.info(LOG_PREFIX + "cachePolicy set to " + cachePolicy);
             }
-            AcService.initialize(cachePolicy, logger);
+
+            // get the pulling policy
+            final String configuredPullPolicy = config.getProperty("pull-policy");
+
+            final PullPolicy pullPolicy;
+            if(configuredPullPolicy == null) {
+                pullPolicy = PullPolicy.DEFAULT;
+            } else {
+                pullPolicy = PullPolicy.valueOf(configuredPullPolicy);
+                logger.info(LOG_PREFIX + "pullPolicy set to " + pullPolicy);
+            }
+
+
+            AcService.initialize(cachePolicy, pullPolicy, logger);
 
             AcLockPacket.registerReceivePacket();
 

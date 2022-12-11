@@ -48,6 +48,11 @@ public class AcService implements PlayerBlockBreakEvents.After {
         NO_CACHE,
     }
 
+    enum PullPolicy {
+        DEFAULT,
+        PER_STACK
+    }
+
     // ===================================================================================
     // Singleton
 
@@ -57,13 +62,14 @@ public class AcService implements PlayerBlockBreakEvents.After {
         return INSTANCE;
     }
 
-    public static synchronized void initialize(CacheInvalidationPolicy cachePolicy, Logger logger) {
+    public static synchronized void initialize(CacheInvalidationPolicy cachePolicy, PullPolicy pullPolicy, Logger logger) {
         if (INSTANCE != null) throw new IllegalStateException();
-        INSTANCE = new AcService(cachePolicy, new AcReachabilityCache<>(AcReachabilityDelegate.INSTANCE, logger), logger);
+        INSTANCE = new AcService(cachePolicy, pullPolicy, new AcReachabilityCache<>(AcReachabilityDelegate.INSTANCE, logger), logger);
     }
 
-    private AcService(CacheInvalidationPolicy cachePolicy, AcReachabilityCache<HopperBlockEntity, Item> cache, Logger logger) {
+    private AcService(CacheInvalidationPolicy cachePolicy, PullPolicy pullPolicy, AcReachabilityCache<HopperBlockEntity, Item> cache,  Logger logger) {
         this.cachePolicy = requireNonNull(cachePolicy);
+        this.pullPolicy = requireNonNull(pullPolicy);
         this.cachePerDimension = new HashMap<>();
         this.logger =  requireNonNull(logger);
     }
@@ -73,6 +79,7 @@ public class AcService implements PlayerBlockBreakEvents.After {
 
     private final Logger logger;
     private final CacheInvalidationPolicy cachePolicy;
+    private final PullPolicy pullPolicy;
     private final Map<Identifier, AcReachabilityCache<HopperBlockEntity, Item>> cachePerDimension;
 
     // ===================================================================================
@@ -187,6 +194,13 @@ public class AcService implements PlayerBlockBreakEvents.After {
      * filtering behavior will be preserved.
      */
     private boolean shouldVetoPullFromAC(AmazingChestBlockEntity pullFromAC, ItemStack stack) {
+
+        if(this.pullPolicy == PullPolicy.PER_STACK) {
+            // keep the last item from every stack to preserve positioning of items within the chest.
+            return stack.getCount() < 2;
+        }
+
+        // default behaviour.
         return !containsAtLeast(pullFromAC, stack.getItem(), 2);
     }
 
