@@ -13,6 +13,7 @@ import net.minecraft.screen.slot.Slot;
 import java.util.Optional;
 
 import static net.pcal.amazingchest.AcUtils.containsAtLeast;
+import net.pcal.amazingchest.AcService.PullPolicy;
 
 public class AcScreenHandler extends GenericContainerScreenHandler {
 
@@ -63,7 +64,9 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
             return ItemStack.EMPTY;
         }
         ItemStack leftover = ItemStack.EMPTY;
-        if (!containsAtLeast(this.getInventory(), stack.getItem(), stack.getCount() + 1)) {
+
+        // if this stack is the last stack of the given item OR if pull-policy is set to per-stack, ensure that 1 item is left in the chest.
+        if (!containsAtLeast(this.getInventory(), stack.getItem(), stack.getCount() + 1) || AcService.getInstance().getPullPolicy() == PullPolicy.PER_STACK) {
             leftover = stack.copy();
             leftover.setCount(1);
             stack.setCount(stack.getCount() - 1);
@@ -87,8 +90,19 @@ public class AcScreenHandler extends GenericContainerScreenHandler {
         @Override
         public Optional<ItemStack> tryTakeStackRange(int min, int max, PlayerEntity player) {
             ItemStack itemStack = super.getStack();
+
+            // if unlocked, do nothing custom
+            if(!AcScreenHandler.this.locked) {
+                return super.tryTakeStackRange(min, max, player);
+            }
+
+            // if PER_STACK is set, always take 1 less than the current stack max.
+            if(AcService.getInstance().getPullPolicy() == PullPolicy.PER_STACK) {
+                return super.tryTakeStackRange(min - 1, max, player);
+            }
+
             // i don't think it's actually 'min' - seems to be the actual number they're trying to grab
-            if (!AcScreenHandler.this.locked || containsAtLeast(AcScreenHandler.this.getInventory(), itemStack.getItem(), min + 1)) {
+            if (containsAtLeast(AcScreenHandler.this.getInventory(), itemStack.getItem(), min + 1)) {
                 return super.tryTakeStackRange(min, max, player);
             } else {
                 return super.tryTakeStackRange(min - 1, max, player);
