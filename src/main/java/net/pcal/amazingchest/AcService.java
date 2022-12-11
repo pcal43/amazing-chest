@@ -32,6 +32,8 @@ import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition.REJE
 import static net.pcal.amazingchest.AcService.CacheInvalidationPolicy.AGGRESSIVE_INVALIDATION;
 import static net.pcal.amazingchest.AcUtils.as;
 import static net.pcal.amazingchest.AcUtils.containsAtLeast;
+import static net.pcal.amazingchest.AcUtils.getInventoryFor;
+import static net.pcal.amazingchest.AcUtils.hasSpaceFor;
 
 /**
  * Central singleton service.
@@ -257,6 +259,13 @@ public class AcService implements PlayerBlockBreakEvents.After {
         }
         final AmazingChestBlockEntity targetAmazingChest = as(targetBlock, AmazingChestBlockEntity.class);
         if (targetAmazingChest != null) {
+
+            // If the amazing chest has no space for the item,
+            // reject it.
+            if(!hasSpaceFor(getInventoryFor(targetAmazingChest), item)) {
+                return REJECT;
+            }
+
             // if they're trying to put it into an AC, veto it if the chest doesn't have one
             return containsAtLeast(targetAmazingChest, item, 1) ? DEMAND : REJECT;
         }

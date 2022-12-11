@@ -49,9 +49,33 @@ public interface AcUtils {
     /**
      * @return the inventory for the given chest.  This is necessary to account for the case of a double chest.
      */
-    private static Inventory getInventoryFor(AmazingChestBlockEntity ace) {
+    static Inventory getInventoryFor(AmazingChestBlockEntity ace) {
         requireNonNull(ace, "ace");
         final BlockState blockState = ace.getWorld().getBlockState(ace.getPos());
         return ChestBlock.getInventory((ChestBlock) blockState.getBlock(), blockState, ace.getWorld(), ace.getPos(), false);
+    }
+
+    /**
+     * Check if an inventory has space for the given item
+    */
+    static Boolean hasSpaceFor(Inventory inventory, Item item) {
+
+        // check each slot in the inventory
+        for (int i = 0; i < inventory.size(); i++) {
+
+            ItemStack stack = inventory.getStack(i);
+
+            if(stack.isEmpty()) return true;
+
+            // no need to count stacks of items that don't match the item that is being pushed.
+            if(stack.getItem() != item) continue;
+
+            // check if the stack of items is full or not
+            if(stack.getMaxCount() > stack.getCount()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
