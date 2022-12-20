@@ -61,7 +61,7 @@ public interface AcUtils {
     static Boolean hasSpaceFor(Inventory inventory, Item item) {
 
         // inventory is null when chest has a full block above it that stops you openning the chest
-        if(inventory == null) return true;
+        if(inventory == null) return false;
 
         // check each slot in the inventory
         for (int i = 0; i < inventory.size(); i++) {
