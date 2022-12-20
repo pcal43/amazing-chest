@@ -19,6 +19,8 @@ import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition.ACCE
 import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition.DEMAND;
 import static net.pcal.amazingchest.AcReachabilityCache.TransferDisposition.REJECT;
 import static net.pcal.amazingchest.AcUtils.as;
+import static net.pcal.amazingchest.AcUtils.hasSpaceFor;
+import static net.pcal.amazingchest.AcUtils.getInventoryFor;
 
 @SuppressWarnings("SpellCheckingInspection")
 public enum AcReachabilityDelegate implements ReachabilityDelegate<HopperBlockEntity, Item> {
@@ -85,6 +87,13 @@ public enum AcReachabilityDelegate implements ReachabilityDelegate<HopperBlockEn
 
         @Override
         public TransferDisposition getDispositionToward(Item item) {
+
+            // If the amazing chest has no space for the item,
+            // reject it.
+            if (!hasSpaceFor(getInventoryFor(this.acbe), item)) {
+                return REJECT;
+            }
+
             return AcUtils.containsAtLeast(this.acbe, requireNonNull(item), 1) ? DEMAND : REJECT;
         }
     }
